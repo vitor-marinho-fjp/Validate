@@ -1,5 +1,5 @@
 ---
-title: "Validate"
+title: "Workshop: Crítica e Imputação de Dados no R: Validate"
 author: "Vitor Marinho"
 date: "2023-09-19"
 output: html_document
@@ -53,7 +53,7 @@ Operadores lógicos: \|, &, if, !, all, any
 
 # Aplicação
 
-```{r}
+```{r warning=FALSE}
 # Instale o pacote validate
 install.packages("validate")
 
@@ -62,9 +62,10 @@ library(validate)
 
 # Carregando dados
 
-imrs_saude <- read_excel("IMRS_BASE_SAUDE_2000-2021.xlsx")
+library(readxl)
+dados_validate <- read_excel("dados_validate.xlsx")
 
-head(imrs_saude)
+head(dados_validate)
 
 ```
 
@@ -103,18 +104,17 @@ regras_validacao <- validator(
 #Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
   R05 = (S_TXMOISQCOR45A59 < 100), 
 #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
- R06 = (S_TXMOATRA15A29<100),
-#Verificar consistencia
-R07 = S_OBINFSIFILS <= POPULACAO,
-VR08 = S_OBTETANONEO <= POPULACAO,
-VR09 = S_OBRAIVA <= POPULACAO)
+  R06 = (S_TXMOATRA15A29<100),
+#Verificar consistencia populacional
+  R07 = S_OBINFSIFILS <= D_POPP0,
+  R08 = S_OBTETANONEO <= D_POPP0)
 
 
 ```
 
 ```{r}
 # Aplica regras de crítica aos dados
-imrs_conf_validade <- confront(imrs_saude, regras_validacao)
+imrs_conf_validade <- confront(dados_validate, regras_validacao)
 
 
 # Obtém resumo da aplicação das regras aos dados
@@ -125,5 +125,5 @@ summary(imrs_conf_validade)
 
 ```{r warning=FALSE}
 
-barplot(imrs_conf_validade,main="Verificação dos Dados")
+plot(imrs_conf_validade,main="Verificação dos Dados")
 ```
