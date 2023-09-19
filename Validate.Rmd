@@ -1,0 +1,129 @@
+---
+title: "Validate"
+author: "Vitor Marinho"
+date: "2023-09-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Escrevendo e aplicando regras de críticas usando `validate`
+
+```{r}
+
+```
+
+O pacote validate do R é uma ferramenta poderosa que pode ser usada para validar dados e garantir a qualidade dos resultados de um projeto. Ele oferece uma variedade de funções que podem ser usadas para verificar a validade de dados, incluindo:
+
+-   **Validação de tipos de dados:** O pacote validate pode ser usado para verificar se os dados estão no formato correto. Por exemplo, você pode usar a função `is.numeric()` para verificar se uma variável é um número.
+
+-   **Validação de valores:** O pacote validate pode ser usado para verificar se os valores estão dentro de um intervalo aceitável. Por exemplo, você pode usar a função `between()` para verificar se um valor está entre dois valores especificados.
+
+-   **Validação de regras:** O pacote validate pode ser usado para verificar se os dados atendem a regras específicas. Por exemplo, você pode usar a função `validate()` para verificar se um valor é maior que outro valor.
+
+Confrontar os dados com as regras e armazenar os resultados
+
+![Van der Loo; de Jonge (2019).](regras.png)
+
+Regras de crítica são expressões que são avaliadas ao ser confrontadas com dados, e resultam em um objeto do tipo 'logical' (TRUE ou FALSE)
+
+Verificações de tipo da variável: is.numeric, is.character,. . .
+
+Comparações: \<, \<=, ==, identical, !=, %in%, \>=, \>
+
+Operadores lógicos: \|, &, if, !, all, any
+
+# Padronização nas regras de crítica
+
+-   Tipo (T)
+
+-   Validade (V)
+
+-   Fluxo (F)
+
+-   Consistência (C)
+
+-   Distribuição (D)
+
+-   Flexível (F)
+
+-   Inflexível (I)
+
+# Aplicação
+
+```{r}
+# Instale o pacote validate
+install.packages("validate")
+
+# Importe o pacote validate
+library(validate)
+
+# Carregando dados
+
+imrs_saude <- read_excel("IMRS_BASE_SAUDE_2000-2021.xlsx")
+
+head(imrs_saude)
+
+```
+
+A função `confrot` serve para definir um conjunto de regras de críticas que podem ser aplicadas a diferentes tipos de conjuntos de dados.
+
+**Verificar valores nulos:**
+
+-   Verifique se não há valores nulos em colunas críticas, como "CHAVE," "IBGE6," "IBGE7," e outras colunas-chave.
+
+**Validar faixas de valores:**
+
+-   Verifique se os valores em colunas numéricas estão dentro de faixas aceitáveis, por exemplo, garantir que as taxas estejam entre 0 e 100.
+
+**Verificar valores ausentes em grupos de colunas relacionadas:**
+
+-   Verifique se as colunas relacionadas, como as taxas de mortalidade, têm valores ausentes em conjunto.
+
+**Verificar valores booleanos:**
+
+-   Verifique se as colunas com valores lógicos (TRUE/FALSE) estão preenchidas corretamente.
+
+**Validar que certas colunas não possuem valores nulos e são numéricas:**
+
+-   Certifique-se de que determinadas colunas têm valores numéricos válidos e não nulos.
+
+```{r}
+
+
+# Crie um conjunto de regras de validação
+regras_validacao <- validator(
+  #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
+  R01 = is.numeric(S_TXBRUTAMORT),  # Verifique se a coluna é numérica.
+  R02 = is.na(S_TXBRUTAMORT),  # Verifique se há valores NA.
+  R03 = (S_TXBRUTAMORT >= 0),  # Verifique se os valores são não negativos.
+  R04 = (S_TXBRUTAMORT < 100),  # Verifique se os valores excedem 100.
+#Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
+  R05 = (S_TXMOISQCOR45A59 < 100), 
+#Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
+ R06 = (S_TXMOATRA15A29<100),
+#Verificar consistencia
+R07 = S_OBINFSIFILS <= POPULACAO,
+VR08 = S_OBTETANONEO <= POPULACAO,
+VR09 = S_OBRAIVA <= POPULACAO)
+
+
+```
+
+```{r}
+# Aplica regras de crítica aos dados
+imrs_conf_validade <- confront(imrs_saude, regras_validacao)
+
+
+# Obtém resumo da aplicação das regras aos dados
+summary(imrs_conf_validade)
+
+
+```
+
+```{r warning=FALSE}
+
+barplot(imrs_conf_validade,main="Verificação dos Dados")
+```
