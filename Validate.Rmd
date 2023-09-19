@@ -125,5 +125,5 @@ summary(imrs_conf_validade)
 
 ```{r warning=FALSE}
 
-plot(imrs_conf_validade,main="Verificação dos Dados")
+plot(imrs_conf_validade)
 ```
