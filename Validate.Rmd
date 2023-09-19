@@ -98,13 +98,11 @@ A função `confrot` serve para definir um conjunto de regras de críticas que p
 regras_validacao <- validator(
   #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
   R01 = is.numeric(S_TXBRUTAMORT),  # Verifique se a coluna é numérica.
-  R02 = is.na(S_TXBRUTAMORT),  # Verifique se há valores NA.
-  R03 = (S_TXBRUTAMORT >= 0),  # Verifique se os valores são não negativos.
-  R04 = (S_TXBRUTAMORT < 100),  # Verifique se os valores excedem 100.
+  R03 = (S_TXBRUTAMORT >= 0 & S_TXBRUTAMORT < 100),  # Verifique se os valores são não negativos.
 #Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
-  R05 = (S_TXMOISQCOR45A59 < 100), 
+  R05 = (S_TXMOISQCOR45A59  >= 0 & S_TXMOISQCOR45A59 < 100), 
 #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
-  R06 = (S_TXMOATRA15A29<100),
+  R06 = (S_TXMOATRA15A29  >= 0 & S_TXMOATRA15A29 < 100),
 #Verificar consistencia populacional
   R07 = S_OBINFSIFILS <= D_POPP0,
   R08 = S_OBTETANONEO <= D_POPP0)
