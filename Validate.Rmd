@@ -118,10 +118,4 @@ imrs_conf_validade <- confront(dados_validate, regras_validacao)
 # Obtém resumo da aplicação das regras aos dados
 summary(imrs_conf_validade)
 
-
-```
-
-```{r warning=FALSE}
-
-plot(imrs_conf_validade)
 ```
