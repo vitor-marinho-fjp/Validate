@@ -99,13 +99,36 @@ regras_validacao <- validator(
   #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
   R01 = is.numeric(S_TXBRUTAMORT),  # Verifique se a coluna é numérica.
   R03 = (S_TXBRUTAMORT >= 0 & S_TXBRUTAMORT < 100),  # Verifique se os valores são não negativos.
+  #Taxa bruta de mortalidade padronizada
+ R04 = (S_TXBRUTAMORTPAD >= 0 & S_TXBRUTAMORTPAD < 100),
+ #Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
+ R05 = (S_TXMOISQCOR45A59 >= 0 & S_TXMOISQCOR45A59 < 100),
+ #Taxa de mortalidade por doenças cérebro-vasculares da população de 45 a 59 anos
+ R06 = (S_TXMOAVC45A59 >= 0 & S_TXMOAVC45A59 < 100),
+ #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
+ R07 = (S_TXMOATRA15A29 >= 0 & S_TXMOATRA15A29 < 100),
+ #Taxa de mortalidade por homicídio da população total
+ R08 = (S_TXMOHOMI >= 0 & S_TXMOHOMI < 100),
+ #Taxa de mortalidade por homicídio da população de 15 a 29 anos
+ R09 = (S_TXMOHOMI15A29 >= 0 & S_TXMOHOMI15A29 < 100),
+ #Taxa de mortalidade por câncer de colo de útero
+ R10 = (S_TXMOCANCOLUT >= 0 & S_TXMOCANCOLUT < 100),
 #Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
-  R05 = (S_TXMOISQCOR45A59  >= 0 & S_TXMOISQCOR45A59 < 100), 
-#Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
-  R06 = (S_TXMOATRA15A29  >= 0 & S_TXMOATRA15A29 < 100),
-#Verificar consistencia populacional
-  R07 = S_OBINFSIFILS <= D_POPP0,
-  R08 = S_OBTETANONEO <= D_POPP0)
+ R11 = (S_TXMOISQCOR45A59  >= 0 & S_TXMOISQCOR45A59 < 100),
+#Taxa de mortalidade por câncer de mama
+R12 = (S_TXMOCANMA  >= 0 & S_TXMOCANMA < 100),
+#Taxa de mortalidade por câncer de pulmão
+R13 = (S_TXMOCANPUL  >= 0 & S_TXMOCANPUL < 100),
+#Mortalidade proporcional da população idosa
+R14 = (S_OBITO60 >= 0 & S_OBITO60 < 100),
+#Proporção de nascidos vivos com baixo peso
+R15 = (S_NASCBAIXOPESO >= 0 & S_NASCBAIXOPESO < 100),
+#Casos confirmados notificados de sífilis congênita em menores de 1 ano
+R16 = (S_OBINFSIFILS >= 0 & S_OBINFSIFILS< 100),
+#Casos confirmados notificados de tétano neonatal
+  R17 = (S_OBTETANONEO <= D_POPP0),
+#Casos confirmados notificados de raiva humana
+  R18 = (S_OBRAIVA <= D_POPP0))
 
 
 ```
@@ -118,4 +141,8 @@ imrs_conf_validade <- confront(dados_validate, regras_validacao)
 # Obtém resumo da aplicação das regras aos dados
 summary(imrs_conf_validade)
 
+```
+
+```{r}
+plot(imrs_conf_validade)
 ```
