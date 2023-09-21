@@ -126,9 +126,14 @@ R15 = (S_NASCBAIXOPESO >= 0 & S_NASCBAIXOPESO < 100),
 #Casos confirmados notificados de sífilis congênita em menores de 1 ano
 R16 = (S_OBINFSIFILS >= 0 & S_OBINFSIFILS< 100),
 #Casos confirmados notificados de tétano neonatal
-  R17 = (S_OBTETANONEO <= D_POPP0),
+R17 = (S_OBTETANONEO <= D_POPP0),
 #Casos confirmados notificados de raiva humana
-  R18 = (S_OBRAIVA <= D_POPP0))
+ R18 = (S_OBRAIVA <= D_POPT),
+#Proporção de internações por doenças de veiculação hídrica
+ R19 = (S_INTERDVHID >= 0 & S_INTERDVHID< 100),
+#Proporção de internações por doenças relacionadas ao saneamento ambiental inadequado
+ R20 = (S_INTERDRSAI >= 0 & S_INTERDRSAI< 100)
+)
 
 
 ```
