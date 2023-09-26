@@ -2,7 +2,8 @@
 title: "Workshop: Crítica e Imputação de Dados no R: Validate"
 author: "Vitor Marinho"
 date: "2023-09-19"
-output: html_document
+output: 
+  html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -37,9 +38,15 @@ Operadores lógicos: \|, &, if, !, all, any
 
 # Padronização nas regras de crítica
 
+A padronização dos nomes permite que seja possível a identificação da classificação da regra e a presenção do atributo de flexilidade. Define-se a seguinte proposta de nomemclatura para as regras de crítica, conforme Silva (2020):
+
+*1 carácter indicando finalidade + 1 carácter indicando flexibilidade + Sequência numérica*
+
+**Classificação por finalidade**
+
 -   Tipo (T)
 
--   Validade (V)
+-   Validade ou Intervalo (V)
 
 -   Fluxo (F)
 
@@ -47,33 +54,44 @@ Operadores lógicos: \|, &, if, !, all, any
 
 -   Distribuição (D)
 
+**Classificação por flexibilidade**
+
 -   Flexível (F)
 
 -   Inflexível (I)
 
-# Aplicação
+**Exemplos**
+
+TI01: regra de tipo e inflexível
+
+VI08: regra de validade e inflexível
+
+CF02: regra de consistência e flexível
+
+Por definição, regras da classe tipo, validade e fluxo são inflexíveis. As regras da classe consistência podem ser flexíveis e inflexíveis e, por fim, a regra do tipo distribuição é sempre flexível.
+
+# Leitura dos dados
 
 ```{r warning=FALSE}
 # Instale o pacote validate
-install.packages("validate")
+# install.packages("validate")
 
 # Importe o pacote validate
 library(validate)
 
 # Carregando dados
-
 library(readxl)
-dados_validate <- read_excel("dados_validate.xlsx")
+dados <- read_excel("dados_simulados.xlsx")
 
-head(dados_validate)
+head(dados)
 
 ```
 
-A função `confrot` serve para definir um conjunto de regras de críticas que podem ser aplicadas a diferentes tipos de conjuntos de dados.
+A função `validator` serve para definir um conjunto de regras de críticas que podem ser aplicadas a diferentes tipos de conjuntos de dados.
 
 **Verificar valores nulos:**
 
--   Verifique se não há valores nulos em colunas críticas, como "CHAVE," "IBGE6," "IBGE7," e outras colunas-chave.
+-   Verifique se não há valores nulos em colunas críticas, como "IBGE7," e outras colunas-chave.
 
 **Validar faixas de valores:**
 
@@ -91,63 +109,130 @@ A função `confrot` serve para definir um conjunto de regras de críticas que p
 
 -   Certifique-se de que determinadas colunas têm valores numéricos válidos e não nulos.
 
+A função `confront` serve para aplicar o conjunto de regras de crítica a uma base de dados específica.
+
+# Regras de tipo (T)
+
 ```{r}
-
-
-# Crie um conjunto de regras de validação
-regras_validacao <- validator(
-  #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
-  R01 = is.numeric(S_TXBRUTAMORT),  # Verifique se a coluna é numérica.
-  R03 = (S_TXBRUTAMORT >= 0 & S_TXBRUTAMORT < 100),  # Verifique se os valores são não negativos.
-  #Taxa bruta de mortalidade padronizada
- R04 = (S_TXBRUTAMORTPAD >= 0 & S_TXBRUTAMORTPAD < 100),
- #Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
- R05 = (S_TXMOISQCOR45A59 >= 0 & S_TXMOISQCOR45A59 < 100),
- #Taxa de mortalidade por doenças cérebro-vasculares da população de 45 a 59 anos
- R06 = (S_TXMOAVC45A59 >= 0 & S_TXMOAVC45A59 < 100),
- #Taxa de mortalidade por acidente de transporte da população de 15 a 29 anos
- R07 = (S_TXMOATRA15A29 >= 0 & S_TXMOATRA15A29 < 100),
- #Taxa de mortalidade por homicídio da população total
- R08 = (S_TXMOHOMI >= 0 & S_TXMOHOMI < 100),
- #Taxa de mortalidade por homicídio da população de 15 a 29 anos
- R09 = (S_TXMOHOMI15A29 >= 0 & S_TXMOHOMI15A29 < 100),
- #Taxa de mortalidade por câncer de colo de útero
- R10 = (S_TXMOCANCOLUT >= 0 & S_TXMOCANCOLUT < 100),
-#Taxa de mortalidade por doenças isquêmicas do coração na população de 45 a 59 anos
- R11 = (S_TXMOISQCOR45A59  >= 0 & S_TXMOISQCOR45A59 < 100),
-#Taxa de mortalidade por câncer de mama
-R12 = (S_TXMOCANMA  >= 0 & S_TXMOCANMA < 100),
-#Taxa de mortalidade por câncer de pulmão
-R13 = (S_TXMOCANPUL  >= 0 & S_TXMOCANPUL < 100),
-#Mortalidade proporcional da população idosa
-R14 = (S_OBITO60 >= 0 & S_OBITO60 < 100),
-#Proporção de nascidos vivos com baixo peso
-R15 = (S_NASCBAIXOPESO >= 0 & S_NASCBAIXOPESO < 100),
-#Casos confirmados notificados de sífilis congênita em menores de 1 ano
-R16 = (S_OBINFSIFILS >= 0 & S_OBINFSIFILS< 100),
-#Casos confirmados notificados de tétano neonatal
-R17 = (S_OBTETANONEO <= D_POPP0),
-#Casos confirmados notificados de raiva humana
- R18 = (S_OBRAIVA <= D_POPT),
-#Proporção de internações por doenças de veiculação hídrica
- R19 = (S_INTERDVHID >= 0 & S_INTERDVHID< 100),
-#Proporção de internações por doenças relacionadas ao saneamento ambiental inadequado
- R20 = (S_INTERDRSAI >= 0 & S_INTERDRSAI< 100)
+# Crie um conjunto de regras de validade
+regras_tipo <- validator(
+  #Taxa bruta de mortalidade 
+  TI01 = is.numeric(S_TXBRUTAMORT),  
+  #Taxa de mortalidade por homicídio da população total
+  TI02 = is.numeric(S_TXMOHOMI),
+  #Taxa de mortalidade por homicídio da população de 15 a 29 anos
+  TI03 = is.numeric(S_TXMOHOMI15A29),
+  #Mortalidade proporcional da população idosa
+  TI04 = is.numeric(S_OBITO60),
+  #Proporção de nascidos vivos com baixo peso
+  TI05 = is.numeric(S_NASCBAIXOPESO),
+  #Casos confirmados notificados de sífilis congênita em menores de 1 ano
+  TI06 = is.numeric(S_OBINFSIFILS),
+  #Casos confirmados notificados de raiva humana
+  TI07 = is.numeric(S_OBRAIVA),
+  #Proporção de internações por doenças de veiculação hídrica
+  TI08 = is.numeric(S_INTERDVHID),
+  #Proporção de internações por doenças relacionadas ao saneamento ambiental inadequado
+  TI09 = is.numeric(S_INTERDRSAI),
+  #Existência de Conselho Municipal de Saúde
+  TI10 = is.character(U_CONSSAU)
 )
 
-
-```
-
-```{r}
 # Aplica regras de crítica aos dados
-imrs_conf_validade <- confront(dados_validate, regras_validacao)
-
+base_conf_tipo <- confront(dados, regras_tipo)
 
 # Obtém resumo da aplicação das regras aos dados
-summary(imrs_conf_validade)
+summary(base_conf_tipo)
 
+# gráfico
+plot(base_conf_tipo)
 ```
+
+# Regras de validade (V)
 
 ```{r}
-plot(imrs_conf_validade)
+regras_validade <- validator(
+  #Taxa bruta de mortalidade 
+  VI01 = (S_TXBRUTAMORT>= 0),  
+  #Taxa de mortalidade por homicídio da população total
+  VI02 = (S_TXMOHOMI >= 0),
+  #Taxa de mortalidade por homicídio da população de 15 a 29 anos
+  VI03 = (S_TXMOHOMI15A29 >= 0),
+  #Mortalidade proporcional da população idosa
+  VI04 = (S_OBITO60 >= 0),
+  #Proporção de nascidos vivos com baixo peso
+  VI05 = (S_NASCBAIXOPESO >= 0 & S_NASCBAIXOPESO <= 100),
+  #Casos confirmados notificados de sífilis congênita em menores de 1 ano
+  VI06 = (S_OBINFSIFILS >= 0),
+  #Casos confirmados notificados de raiva humana
+  VI07 = (S_OBRAIVA >= 0),
+  #Proporção de internações por doenças de veiculação hídrica
+  VI08 = (S_INTERDVHID >= 0 & S_INTERDVHID <= 100),
+  #Proporção de internações por doenças relacionadas ao saneamento ambiental inadequado
+  VI09 = (S_INTERDRSAI >= 0 & S_INTERDRSAI <= 100),
+  #Existência de Conselho Municipal de Saúde
+  VI10 = (U_CONSSAU %in% c("Sim","Não"))
+)
+
+# Aplica regras de crítica aos dados
+base_conf_validade <- confront(dados, regras_validade)
+
+# Obtém resumo da aplicação das regras aos dados
+summary(base_conf_validade)
+
+# gráfico
+plot(base_conf_validade)
 ```
+
+# Regras de consistência (C)
+
+```{r}
+regras_consistencia <- validator(
+  #Taxa bruta de mortalidade 
+  CF01 = (S_TXBRUTAMORT/S_TXBRUTAMORT_t_1) <= 1.10,  
+  #Casos confirmados notificados de sífilis congênita em menores de 1 ano
+  CI06 = (S_OBINFSIFILS <= D_POPP0),
+  #Casos confirmados notificados de raiva humana
+  CI07 = (S_OBRAIVA <= D_POPT)
+)
+
+# Aplica regras de crítica aos dados
+base_conf_consistencia <- confront(dados, regras_consistencia)
+
+# Obtém resumo da aplicação das regras aos dados
+summary(base_conf_consistencia)
+
+# gráfico
+plot(base_conf_consistencia)
+```
+
+# Regras de distribuição (D)
+
+```{r}
+regras_distribuicao <- validator(
+    #Casos confirmados notificados de sífilis congênita em menores de 1 ano
+  DF01 = (S_OBINFSIFILS  < 5),
+  #Casos confirmados notificados de raiva humana
+  DF02 = (S_OBRAIVA < 5),
+  #Proporção de internações por doenças de veiculação hídrica
+  DF03 = (mean(S_INTERDVHID) <= 4),
+  #Proporção de internações por doenças relacionadas ao saneamento ambiental inadequado
+  DF04 = (mean(S_INTERDRSAI) <= 4),
+  #Existência de Conselho Municipal de Saúde
+  DF05 = (mean(U_CONSSAU=="Sim") >= 0.95)
+)
+# Aplica regras de crítica aos dados
+base_conf_distribuicao <- confront(dados, regras_distribuicao)
+
+# Obtém resumo da aplicação das regras aos dados
+summary(base_conf_distribuicao)
+
+# gráfico
+plot(base_conf_distribuicao)
+```
+
+# Referências
+
+Silva, P.L.d.N. (2020). Crítica e Imputação de Dados. Notas de aula - Escola Nacional de Ciências Estatísticas.
+
+van der Loo, M. P. J., & de Jonge, E. (2021). Data Validation Infrastructure for R. Journal of Statistical Software, 97(10), 1--31. <https://doi.org/10.18637/jss.v097.i10>
