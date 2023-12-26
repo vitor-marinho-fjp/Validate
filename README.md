@@ -1,15 +1,6 @@
 
 ```markdown
----
-title: "Workshop: Crítica e Imputação de Dados no R: Validate"
-author: "Vitor Marinho"
-date: "2023-09-19"
-output: 
-  html_document
----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Workshop: Crítica e Imputação de Dados no R: Validate
