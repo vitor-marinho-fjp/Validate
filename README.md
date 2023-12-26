@@ -1,4 +1,3 @@
-Aqui está o README.md para o seu workshop "Crítica e Imputação de Dados no R: Validate":
 
 ```markdown
 ---
